@@ -1,0 +1,13 @@
+## Title: MacroMaker
+## Version: 1.5
+## Author: CaptJack2883
+## Interface: 80300
+## OptionalDeps: MacroMaker, LibDataBroker-1.1, AceDB-3.0, LibDBIcon-1.0
+## SavedVariablesPerCharacter: MMMainHidden, MMCustomString, MMVerbose
+
+MacroMaker.xml
+MacroMaker.lua
+MacroMakerConfig.xml
+MacroMakerConfig.lua
+UI-Quickslot2.tga
+MacroMakerIcon.tga

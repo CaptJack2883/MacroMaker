@@ -1,0 +1,269 @@
+<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="MacroMakerConfig.lua" />
+	<Frame name="MacroMakerConfig" hidden="true" parent="UIParent" toplevel="true">
+		<Size>
+			<AbsDimension x="485" y="424" />
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT">
+				<Offset x="204" y="-32" />
+			</Anchor>
+		</Anchors>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="11" right="12" top="12" bottom="11" />
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="32" />
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="32" />
+			</EdgeSize>
+		</Backdrop>
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="MMConfigTitle" inherits="GameFontNormal" text="Macro Maker">
+					<Size>
+						<AbsDimension x="151" y="44" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="18" y="-18" />
+						</Anchor>
+					</Anchors>
+					<FontHeight>
+						<AbsValue val="26" />
+					</FontHeight>
+				</FontString>
+				<FontString name="MMFontStringVerbose" inherits="GameFontNormal" text="Verbose Mode:">
+					<Size>
+						<AbsDimension x="126" y="28" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="18" y="-210" />
+						</Anchor>
+					</Anchors>
+					<FontHeight>
+						<AbsValue val="14" />
+					</FontHeight>
+				</FontString>
+				<FontString name="MMFontStringVerboseWarn" inherits="GameFontNormal" text="Verbose Mode is very spammy. I use this for my testing. This will reset when you logout or reloadui">
+					<Size>
+						<AbsDimension x="221" y="52" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="27" y="-248" />
+						</Anchor>
+					</Anchors>
+					<FontHeight>
+						<AbsValue val="14" />
+					</FontHeight>
+				</FontString>
+			<!-- 
+			JunkFilter Copied Code in this comment block.
+			
+				<FontString name="MMFontStringEmpty" inherits="GameFontNormal" text="Empty Slots: ">
+					<Size>
+						<AbsDimension x="112" y="32" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="32" y="-98" />
+						</Anchor>
+					</Anchors>
+					<FontHeight>
+						<AbsValue val="14" />
+					</FontHeight>
+				</FontString>
+				<FontString name="MMFontStringCopperDelete" inherits="GameFontNormal" text="Max Delete: (copper)">
+					<Size>
+						<AbsDimension x="140" y="32" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="18" y="-156" />
+						</Anchor>
+					</Anchors>
+					<FontHeight>
+						<AbsValue val="14" />
+					</FontHeight>
+				</FontString>
+				<FontString name="MMFontStringVerbose" inherits="GameFontNormal" text="Verbose Mode:">
+					<Size>
+						<AbsDimension x="126" y="28" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="18" y="-210" />
+						</Anchor>
+					</Anchors>
+					<FontHeight>
+						<AbsValue val="14" />
+					</FontHeight>
+				</FontString>
+				<FontString name="MMFontStringEmptyMax" inherits="GameFontNormal" text="(Max = 99)">
+					<Size>
+						<AbsDimension x="99" y="32" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="282" y="-98" />
+						</Anchor>
+					</Anchors>
+					<FontHeight>
+						<AbsValue val="14" />
+					</FontHeight>
+				</FontString>
+				<FontString name="MMFontStringMax" inherits="GameFontNormal" text="(Max = 999g 99s 99c)">
+					<Size>
+						<AbsDimension x="164" y="32" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="282" y="-156" />
+						</Anchor>
+					</Anchors>
+					<FontHeight>
+						<AbsValue val="14" />
+					</FontHeight>
+				</FontString>
+				<FontString name="MMFontStringMaxValue" inherits="GameFontNormal" text="Using the maximum values will cause slight interface lag.">
+					<Size>
+						<AbsDimension x="164" y="58" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="282" y="-194" />
+						</Anchor>
+					</Anchors>
+					<FontHeight>
+						<AbsValue val="14" />
+					</FontHeight>
+				</FontString>
+				<FontString name="MMFontStringVerboseWarn" inherits="GameFontNormal" text="Verbose Mode is very spammy. I use this for my testing. ">
+					<Size>
+						<AbsDimension x="221" y="52" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="27" y="-248" />
+						</Anchor>
+					</Anchors>
+					<FontHeight>
+						<AbsValue val="14" />
+					</FontHeight>
+				</FontString>
+				<FontString name="MMFontStringWarned" inherits="GameFontNormal" text="You have been warned.">
+				
+					<Size>
+						<AbsDimension x="221" y="23" />
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset x="27" y="-306" />
+						</Anchor>
+					</Anchors>
+					<FontHeight>
+						<AbsValue val="16" />
+					</FontHeight>
+				</FontString>
+			
+			JunkFilter Copied Code in this comment block.
+			--> 
+			</Layer>
+		</Layers>
+		<Frames>
+			<!-- 
+			JunkFilter Copied Code in this comment block.
+			
+			<EditBox name="MMBoxHowMany" inherits="InputBoxTemplate" letters="2" numeric="true">
+				<Size>
+					<AbsDimension x="100" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="164" y="-98" />
+					</Anchor>
+				</Anchors>
+			</EditBox>
+			<EditBox name="MMBoxMaxDelete" inherits="InputBoxTemplate" letters="7" numeric="true">
+				<Size>
+					<AbsDimension x="100" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="164" y="-156" />
+					</Anchor>
+				</Anchors>
+			</EditBox>
+			<CheckButton name="MMVerboseCheckbox" inherits="UICheckButtonTemplate" text="">
+				<Size>
+					<AbsDimension x="32" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="164" y="-210" />
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			
+			JunkFilter Copied Code in this comment block.
+			--> 
+			
+			<CheckButton name="MMVerboseCheckbox" inherits="UICheckButtonTemplate" text="">
+				<Size>
+					<AbsDimension x="32" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="164" y="-210" />
+					</Anchor>
+				</Anchors>
+			</CheckButton>			
+			<Button name="MMOptionsButtonHide" inherits="UIPanelButtonTemplate" text="Hide Macro Maker">
+				<Size>
+					<AbsDimension x="137" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="27" y="-368" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						MMOptionsButtonHide_OnClick()
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="MMOptionsButtonShowMM" inherits="UIPanelButtonTemplate" text="Show Macro Maker">
+				<Size>
+					<AbsDimension x="121" y="32" />
+				</Size>
+				<Anchors>
+					<Anchor point="TOPLEFT">
+						<Offset x="193" y="-368" />
+					</Anchor>
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						MMOptionsButtonShowMM_OnClick()
+					</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				MacroMakerConfig_OnLoad(self)
+				self:RegisterForDrag("LeftButton");
+			</OnLoad>
+			<OnDragStart>
+				self:StartMoving();
+			</OnDragStart>
+			<OnDragStop>
+				self:StopMovingOrSizing();
+			</OnDragStop>
+		</Scripts>
+	</Frame>
+</Ui>
