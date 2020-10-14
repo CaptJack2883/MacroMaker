@@ -1,5 +1,5 @@
 ## Title: MacroMaker
-## Version: 1.5
+## Version: 1.6
 ## Author: CaptJack2883
 ## Interface: 90001
 ## OptionalDeps: MacroMaker, LibDataBroker-1.1, AceDB-3.0, LibDBIcon-1.0

@@ -1,7 +1,7 @@
 -- Author      : CaptJack2883
--- Create Date : 08/24/2017
--- Modify Date : 01/14/2020
-
+-- Create Date : 08/28/2014
+-- Modify Date : 10/14/2020
+-- Version     : 1.6
 	--[[ 
 		To Do:
 		
