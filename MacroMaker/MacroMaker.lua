@@ -20,16 +20,18 @@
 			
 			In Progress: Add /petattack to all pet classes/specs
 			
+      Save minimap button location
 			Finish Settings Page. (Let users input custom macros.)
 			Allow custom macros. (Probably requires a table.)
 			Allow it to do /castsequence, with reset values and combat/target resets.			
 			
 			
 		Bugs:
+      Backdrop is no longer used by Blizz, need to find alternate.
 		
 			Truncating spellname inside of create macro. Need separate variable for truncated name.
 			
-			Priests seem to have issues with spell names.
+			Priests seem to have issues with spell names. This was found to be based on Icon name, not Spell name.
 		
 			Fixed: If you have a macro selected, it creates a new macro with that body with the new name.
 					|

@@ -1,5 +1,8 @@
 Macro Maker by CaptJack2883
 
+Version 1.6
+	Updated TOC File for Patch 9.0 (Shadowlands)
+	Fixed issue with background due to Shadowlands updates.
 Version 1.5
 	Updated TOC File for Patch 8.3
 

@@ -8,22 +8,21 @@
 			Highlight Layer only shows on mouse-over. (Obviously)
 		--> 
 		
-	<Frame name="MacroMakerFrame" parent="UIParent" movable="true" enableMouse="true">
-		<Size x="190" y="415" />
+	<Frame name="MacroMakerFrame" parent="UIParent" inherits="UIPanelDialogTemplate" movable="true" enableMouse="true">
+		<Size x="190" y="410" />
 		<Anchors>
 			<Anchor point="CENTER" relativeTo="UIParent" />
 		</Anchors>
-		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+		<!--
+    <Backdrop bgFile="UI-BARBERSHOP.png" edgeFile="interface/dialogframe/ui-dialogbox-border.blp.meta" tile="false">
 			<BackgroundInsets>
 				<AbsInset left="11" right="12" top="12" bottom="11" />
 			</BackgroundInsets>
-			<TileSize>
-				<AbsValue val="32" />
-			</TileSize>
 			<EdgeSize>
 				<AbsValue val="32" />
 			</EdgeSize>
 		</Backdrop>
+    -->
 		<Layers>
 			<Layer level="OVERLAY">
 				<!-- All FontString's should go here. -->
@@ -32,6 +31,17 @@
 					<Anchors>
 						<Anchor point="TOP">
 							<Offset x="0" y="-212" />
+						</Anchor>
+					</Anchors>
+					<FontHeight>
+						<AbsValue val="60" />
+					</FontHeight>
+				</FontString>
+        <FontString name="MMTitle" inherits="GameFontNormal" text="Macro Maker" frameStrata="HIGH" hidden="false">
+					<Size x="100" y="60" />
+					<Anchors>
+						<Anchor point="TOP">
+							<Offset x="-35" y="15" />
 						</Anchor>
 					</Anchors>
 					<FontHeight>
@@ -47,7 +57,7 @@
 				</Size>
 				<Anchors>
 					<Anchor point="TOP">
-						<Offset x="0" y="-25" />
+						<Offset x="0" y="-35" />
 					</Anchor>
 				</Anchors>
 				<Scripts>
@@ -62,7 +72,7 @@
 				</Size>
 				<Anchors>
 					<Anchor point="TOP">
-						<Offset x="0" y="-62" />
+						<Offset x="0" y="-70" />
 					</Anchor>
 				</Anchors>
 				<Scripts>
@@ -77,7 +87,7 @@
 				</Size>
 				<Anchors>
 					<Anchor point="TOP">
-						<Offset x="0" y="-99" />
+						<Offset x="0" y="-105" />
 					</Anchor>
 				</Anchors>
 				<Scripts>
@@ -92,7 +102,7 @@
 				</Size>
 				<Anchors>
 					<Anchor point="TOP">
-						<Offset x="0" y="-136" />
+						<Offset x="0" y="-140" />
 					</Anchor>
 				</Anchors>
 				<Scripts>
