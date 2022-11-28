@@ -9,7 +9,7 @@
 		--> 
 		
 	<Frame name="MacroMakerFrame" parent="UIParent" inherits="UIPanelDialogTemplate" movable="true" enableMouse="true">
-		<Size x="190" y="410" />
+		<Size x="190" y="450" />
 		<Anchors>
 			<Anchor point="CENTER" relativeTo="UIParent" />
 		</Anchors>
@@ -26,22 +26,23 @@
 		<Layers>
 			<Layer level="OVERLAY">
 				<!-- All FontString's should go here. -->
-				<FontString name="MMHelpString" inherits="GameFontNormal" text="Drag a Spell Icon onto the '?' below, then click the 'Create Macro' button above. Right Click the Icon to Reset." frameStrata="HIGH" hidden="false">
-					<Size x="145" y="85" />
+        <FontString name="MMTitle" inherits="GameFontNormalLarge" text="Macro Maker" hidden="false">
+					<Size x="200" y="100" />
 					<Anchors>
 						<Anchor point="TOP">
-							<Offset x="0" y="-212" />
+							<Offset x="0" y="10" />
 						</Anchor>
 					</Anchors>
 					<FontHeight>
 						<AbsValue val="60" />
 					</FontHeight>
 				</FontString>
-        <FontString name="MMTitle" inherits="GameFontNormal" text="Macro Maker" frameStrata="HIGH" hidden="false">
-					<Size x="100" y="60" />
+        
+				<FontString name="MMHelpString" inherits="GameFontNormal" text="Drag a Spell Icon onto the '?' below, then click the 'Create Macro' button above. Once the macro is created, you can drag it from the icon below back to your Action Bars. Right Click the Icon to Reset."  hidden="false">
+					<Size x="140" y="200" />
 					<Anchors>
 						<Anchor point="TOP">
-							<Offset x="-35" y="15" />
+							<Offset x="0" y="-160" />
 						</Anchor>
 					</Anchors>
 					<FontHeight>
@@ -51,6 +52,7 @@
 			</Layer>
 		</Layers>
 		<Frames>
+      <!--
 			<Button name="MMBtnCheck" inherits="UIPanelButtonTemplate" text="Check Macros">
 				<Size>
 					<AbsDimension x="115" y="33" />
@@ -81,13 +83,15 @@
 					</OnClick>
 				</Scripts>
 			</Button>
+      
+      -->
 			<Button name="MMBtnCreate" inherits="UIPanelButtonTemplate" text="Create Macro">
 				<Size>
 					<AbsDimension x="123" y="33" />
 				</Size>
 				<Anchors>
 					<Anchor point="TOP">
-						<Offset x="0" y="-105" />
+						<Offset x="0" y="-70" />
 					</Anchor>
 				</Anchors>
 				<Scripts>
@@ -102,7 +106,7 @@
 				</Size>
 				<Anchors>
 					<Anchor point="TOP">
-						<Offset x="0" y="-140" />
+						<Offset x="0" y="-110" />
 					</Anchor>
 				</Anchors>
 				<Scripts>
@@ -117,7 +121,7 @@
 				</Size>
 				<Anchors>
 					<Anchor point="TOP">
-						<Offset x="0" y="-175" />
+						<Offset x="0" y="-150" />
 					</Anchor>
 				</Anchors>
 				<Scripts>
@@ -129,11 +133,11 @@
 			
 			<Button name="MMBtnMacroInput" inherits="ActionButtonTemplate, SecureActionButtonTemplate" frameStrata="HIGH" hidden="false" text="Input">
 				<Size>
-					<AbsDimension x="25" y="25" />
+					<AbsDimension x="30" y="30" />
 				</Size>
 				<Anchors>
 					<Anchor point="TOP">
-						<Offset x="0" y="-315" />
+						<Offset x="-10" y="-335" />
 					</Anchor>
 				</Anchors>
 				<Scripts>
@@ -185,15 +189,35 @@
 				<Size>
 					<AbsDimension x="105" y="33" />
 				</Size>
+        <Attributes>
+         <Attribute name="type" value="action" />
+         <Attribute name="action" value="1" type="number" />
+        </Attributes>
 				<Anchors>
 					<Anchor point="TOP">
-						<Offset x="0" y="-360" />
+						<Offset x="0" y="-390" />
 					</Anchor>
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						 MMBtnShowMacroPanel_OnClick()
-						<!--RunMacro("MacroPanel") -->
+            MMBtnShowMacroPanel_OnClick()
+            
+						<!--RunMacroText("/macro")
+            ShowUIPanel(MacroFrame, true) -->
+            <!--
+            if ( MacroFrame and MacroFrame:IsShown() ) then
+              MacroFrame:Hide()
+              return
+            else
+              if not (MacroFrame) then
+                ShowMacroFrame()
+                return
+              else
+                MacroFrame:Show()
+                return
+              end
+            end
+            tinsert(UISpecialFrames, MacroFrame:GetName()) -->
 					</OnClick>
 				</Scripts>
 			</Button>

@@ -1,7 +1,7 @@
 -- Author      : CaptJack2883
 -- Create Date : 08/28/2014
--- Modify Date : 10/14/2020
--- Version     : 1.6
+-- Modify Date : 11/27/2022
+-- Version     : 1.8
 	--[[ 
 		To Do:
 		
@@ -17,7 +17,8 @@
 			Done: Make verbose mode work.
 			Done: Hunters and Warlocks get petattack macro instead of normal.
 			Done: Make it not be so spammy.
-			
+			Fixed: Backdrop is no longer used by Blizz, need to find alternate.
+      
 			In Progress: Add /petattack to all pet classes/specs
 			
       Save minimap button location
@@ -27,15 +28,21 @@
 			
 			
 		Bugs:
-      Backdrop is no longer used by Blizz, need to find alternate.
+      
 		
 			Truncating spellname inside of create macro. Need separate variable for truncated name.
 			
 			Priests seem to have issues with spell names. This was found to be based on Icon name, not Spell name.
 		
 			Fixed: If you have a macro selected, it creates a new macro with that body with the new name.
-					|
-					-->Modularize more, clear info and recreate before creating macro.
+					
+        -->Modularize more, clear info and recreate before creating macro.
+          
+    Troubleshooting code:
+      
+    --local version, build, date, tocversion = GetBuildInfo();
+    --print("MM: Version: ", version, " Build: ", build, " Date: ", date, " TOC Version: ", tocversion)
+    
 		--]]
 
 -- Variable declarations (For All Files!)
@@ -71,11 +78,18 @@ MMCurrentSpellName = nil
 MMPlayerClass = nil
 MMEnglishClass = nil
 MMVerbose = nil
+MMMinimapButtonShown = nil
+-- variables for the LDB Icon
+MM_LDBicon = LibStub("LibDBIcon-1.0")
+MM_LDBaddon = LibStub("AceAddon-3.0"):NewAddon("Macro Maker", "AceConsole-3.0")
+
 
 MMQuestionIcon = nil
 MMCustomSpellName = nil
 MMCustomMacroString = nil
 MMEventFrame = CreateFrame("FRAME", nil, UIParent)
+
+
 if MMEventFrame ~= nil then
 	--MMPrint("MMEventFrame has been created")
 end
@@ -92,16 +106,32 @@ function MMEventHandler(self, event, ...)
 		--	Check for loaded SavedVariables
 		if MMMainHidden == nil then
 			MMMainHidden = 1
+      --MacroMakerFrame:SetBackdrop(BACKDROP_DARK_DIALOG_32_32)
+      MacroMakerFrame:Raise()
 			MacroMakerFrame:Show()
 		end
 		if MMMainHidden == 0 then
 			MacroMakerFrame:Hide()
 		elseif MMMainHidden == 1 then
+      --MacroMakerFrame:SetBackdrop(BACKDROP_DARK_DIALOG_32_32)
+      MacroMakerFrame:Raise()
 			MacroMakerFrame:Show()
 		end
 		if MMVerbose == nil then
 			MMVerbose = 0
 		end
+		if MMMinimapButtonShown == nil then
+			MMMinimapButtonShown = true
+      MMMinimapButtonCheckbox:SetChecked(true)
+      MM_LDBicon:Show("Macro Maker")
+      MM_LDBaddon.db.profile.minimap.hide = true
+      MacroMakerConfig_Refresh()
+      MacroMakerConfig_Close()
+    else      
+      MMMinimapButtonCheckbox:SetChecked(MMMinimapButtonShown)
+      MacroMakerConfig_Refresh()
+      MacroMakerConfig_Close()
+    end
 		MMPrint("Macro Maker has been loaded.")
 		MMResetInputButton()
 		MMResetInputButton()
@@ -347,8 +377,9 @@ function MMCustomMacro(MMCustomSpellName, MMCustomMacroString)
 				MacroFrame_SaveMacro()
 				HideUIPanel(MacroFrame)
 				CreateMacro(MMSpellNameTrunc, "INV_MISC_QUESTIONMARK", MMMacroBodyString, 1)
-				MMPrint("Creating macro for ", MMSpellName)				
-				ShowUIPanel(MacroFrame)
+				MMPrint("Creating macro for ", MMSpellName)
+				--ShowUIPanel(MacroFrame) Replaced by ShowMacroFrame()
+        ShowMacroFrame()
 				return
 			end
 		end
@@ -362,7 +393,32 @@ function MMBtnShowMacroPanel_OnClick()
 	-- The following code is "PROTECTED" and is not usable.
 	--RunMacroText("/macro")
 	--RunMacro("MacroPanel")
-	ShowUIPanel(MacroFrame)
+	--ShowUIPanel(MacroFrame)
+  
+  local version, build, date, tocversion = GetBuildInfo();
+  if tocversion < 90000 then
+    -- We are in classic/tbc/wrath. Don't use new code for closing the Macro Panel.
+    if ( MacroFrame and MacroFrame:IsShown() ) then
+      HideUIPanel(MacroFrame)
+    else
+      ShowMacroFrame()
+      --ShowUIPanel(MacroFrame) This one doesn't work in classic
+    end
+  else
+    -- We are in retail and we can use the new code.    
+    if ( MacroFrame and MacroFrame:IsShown() ) then
+      --MacroFrame:Hide()
+      HideUIPanel(MacroFrame)
+    else
+      if not (MacroFrame) then
+      ShowMacroFrame()
+      --ShowUIPanel(MacroFrame) Doesn't work in retail either.
+      else
+        MacroFrame:Show()
+        tinsert(UISpecialFrames, MacroFrame:GetName())
+      end
+    end    
+  end
 end
 
 function MMBtnMacroInput_OnDrag()
@@ -441,7 +497,65 @@ function MMSetMacroString()
 	
 end
 
--- Pasted Code for LDB and LDBIcon.
+-- Start of new LDB Broker Icon using LibDBIcon-1.0
+
+local macroMakerLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Macro Maker", {
+type = "data source",
+text = "Macro Maker",
+icon = "Interface\\AddOns\\MacroMaker\\MacroMakerIcon.tga",
+OnClick = function(clickedframe, button)
+		if MMMainHidden == 0 then      
+      MacroMakerFrame:Raise()
+      MacroMakerFrame:Show()
+      MMMainHidden = 1
+    elseif MMMainHidden == 1 then
+      MacroMakerFrame:Hide()
+      MMMainHidden = 0
+    end
+end,
+})
+
+function MM_LDBaddon:OnInitialize() 
+-- Need a ## SavedVariables: MacroMakerDB line in your TOC 
+self.db = LibStub("AceDB-3.0"):New("MacroMakerDB", { profile = { minimap = { hide = false, }, }, }) 
+MM_LDBicon:Register("Macro Maker", macroMakerLDB, self.db.profile.minimap) 
+self:RegisterChatCommand("macromaker", "MacroMakerChatCommand") 
+end
+
+function MM_LDBaddon:MacroMakerChatCommand() 
+  self.db.profile.minimap.hide = not self.db.profile.minimap.hide 
+  if self.db.profile.minimap.hide then 
+    MM_LDBicon:Hide("Macro Maker")
+    MMMinimapButtonShown = false
+  else 
+    MM_LDBicon:Show("Macro Maker") 
+    MMMinimapButtonShown = true
+  end 
+end
+
+
+-- End of new LDB Broker Icon
+
+--[[ Code for libdatabroker-1-1 (deprecated?)
+LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject("Macro Maker", {
+	type = "launcher",
+	icon = "Interface\\AddOns\\MacroMaker\\MacroMakerIcon.tga",
+	OnClick = function(clickedframe, button)
+		if MMMainHidden == 0 then
+      MacroMakerFrame:Raise()
+      MacroMakerFrame:Show()
+      MMMainHidden = 1
+    elseif MMMainHidden == 1 then
+      MacroMakerFrame:Hide()
+      MMMainHidden = 0
+    end
+	end,
+})
+]]--
+
+
+--[[
+-- Pasted Code for LDB and LDBIcon. (deprecated?)
 
 local db; -- File-global handle to the Database
 -- LibDBIcon storage
@@ -449,7 +563,7 @@ local defaults = {profile = {LDBIconStorage = {},},};
 
 local ldbObject = {
  type = "launcher",
- icon = "Interface\\AddOns\\MacroMaker\\MacroMakerIcon",
+ icon = "Interface\\AddOns\\MacroMaker\\MacroMakerIcon.tga",
 --This is the icon used. Any .blp or .tga file is a valid icon.
 --This path is ALWAYS relative to the World of Warcraft
 --root (ie, "C:\Program Files\World of Warcraft" for
@@ -459,6 +573,7 @@ local ldbObject = {
 -- Add a click handler here
 
 	if MMMainHidden == 0 then
+    MacroMakerFrame:Raise()
 		MacroMakerFrame:Show()
 		MMMainHidden = 1
 	elseif MMMainHidden == 1 then
@@ -489,6 +604,7 @@ LibStub("LibDataBroker-1.1"):NewDataObject("AddonLDBObjectName", ldbObject);
 LibStub("LibDBIcon-1.0"):Register("AddonLDBObjectName", ldbObject, db.LDBIconStorage);
 
 -- End of Pasted Code.
+]]--
 
 --SetScripts MUST be AFTER the function they call.
 MMEventFrame:SetScript("OnEvent", MMEventHandler)

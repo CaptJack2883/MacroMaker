@@ -1,7 +1,23 @@
 Macro Maker by CaptJack2883
 
+Version 1.8
+  Updated TOC File for Patch 10.0.2
+  Fixed the Minimap icon: It now saves it's position around the minimap.
+  Minimap icon should now be friendly with LDB icon viewers.
+  Added option to Hide/Show the Minimap icon.
+  Fixed errors introduced by Blizzard updating their API for Shadowlands/Dragonflight.
+  Updated the UI slightly to make the addon easier to use and less confusing.
+  Fixed the "Macro Panel" button, it now opens/closes the Macro Panel properly. (Special Thanks to Bolerro619 for this code)
+  Fixed an issue that was causing the Macro Panel to close if you had it open when making a macro. Unfortunately Blizzard decided that the Macro panel will only open to the General Macros, not the Character Specific ones.
+  
+Version 1.7
+  Updates for TOC and Dependancies for the Classic version.
+  
+Version 1.61
+	Updated TOC File for Patch 9.0.2
+
 Version 1.6
-	Updated TOC File for Patch 9.0 (Shadowlands)
+	Updated TOC File for Patch 9.0.1 (Shadowlands)
 	Fixed issue with background due to Shadowlands updates.
 Version 1.5
 	Updated TOC File for Patch 8.3
