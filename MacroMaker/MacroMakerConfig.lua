@@ -1,7 +1,8 @@
 -- Author      : CaptJack2883
 -- Create Date : 08/24/2017
+-- Modify Date : 11/27/2022
 
--- Put Variables in MacroMaker.lua
+-- Put Variables in MacroMaker.lua (unless they're function-local)
 
 
 function MacroMakerConfig_OnLoad(panel)	
@@ -20,6 +21,29 @@ function MMConfigShow()
 	--MMCreateDropDowns()
 end
 
+function MacroMakerConfig_Close()
+  MMPrint("The Config screen was closed.")
+  MMMinimapButtonShown = MMMinimapButtonCheckbox:GetChecked()
+  if MMMinimapButtonShown then
+    MM_LDBaddon.db.profile.minimap.hide = false        
+    MM_LDBicon:Show("Macro Maker")
+  else        
+    MM_LDBaddon.db.profile.minimap.hide = true        
+    MM_LDBicon:Hide("Macro Maker")
+  end
+end
+
+function MacroMakerConfig_Refresh()  
+  MMPrint("The Config screen was refreshed.")
+  MMMinimapButtonCheckbox:SetChecked(MMMinimapButtonShown)
+  if MMMinimapButtonShown then
+    MM_LDBaddon.db.profile.minimap.hide = false        
+    MM_LDBicon:Show("Macro Maker")
+  else        
+    MM_LDBaddon.db.profile.minimap.hide = true        
+    MM_LDBicon:Hide("Macro Maker")
+  end
+end
 
 function MMOptionsButtonHide_OnClick()
 	MacroMakerFrame:Hide()
