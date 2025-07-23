@@ -1,38 +1,20 @@
 -- Author      : CaptJack2883
 -- Create Date : 08/28/2014
--- Modify Date : 11/27/2022
--- Version     : 1.8
+-- Modify Date : 07/22/2025
+-- Version     : 2.0
 	--[[ 
-		To Do:
-		
-			Done: Make it accept a dragged ability from which to create a macro.
-			Done: Make it test for existing macros.
-			Done: Make it not overwrite current macros.
-			Done: Make it actually create macros.
-			Done: Make A FontString to explain the "?" button, and how to make macros.
-			Done: Upon creation, allow dragging macro from window to action bar.
-			Done: Make it actually do something if there is no empty macro.
-			Done: Make a Minimap Button
-			Done: Make a button to open Macro Screen. (still buggy)
-			Done: Make verbose mode work.
-			Done: Hunters and Warlocks get petattack macro instead of normal.
-			Done: Make it not be so spammy.
-			Fixed: Backdrop is no longer used by Blizz, need to find alternate.
-      
-			In Progress: Add /petattack to all pet classes/specs
-			
-      Save minimap button location
+		To Do:				    
+			In Progress: Add /petattack to all pet classes/specs			      
 			Finish Settings Page. (Let users input custom macros.)
 			Allow custom macros. (Probably requires a table.)
 			Allow it to do /castsequence, with reset values and combat/target resets.			
-			
-			
+						
 		Bugs:
-      
-		
+      		
 			Truncating spellname inside of create macro. Need separate variable for truncated name.
 			
 			Priests seem to have issues with spell names. This was found to be based on Icon name, not Spell name.
+			hopefully this is fixed, since we're using the spell ID now.
 		
 			Fixed: If you have a macro selected, it creates a new macro with that body with the new name.
 					
@@ -81,13 +63,38 @@ MMVerbose = nil
 MMMinimapButtonShown = nil
 -- variables for the LDB Icon
 MM_LDBicon = LibStub("LibDBIcon-1.0")
-MM_LDBaddon = LibStub("AceAddon-3.0"):NewAddon("Macro Maker", "AceConsole-3.0")
+-- Only require LibDataBroker for the minimap button
+local macroMakerLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Macro Maker", {
+    type = "data source",
+    text = "Macro Maker",
+    icon = "Interface\\AddOns\\MacroMaker\\MacroMakerIcon.tga",
+    OnClick = function(clickedframe, button)
+        if button == "RightButton" then
+            MMConfigShow()
+        else
+            if MMMainHidden == 0 then      
+                MacroMakerFrame:Raise()
+                MacroMakerFrame:Show()
+                MMMainHidden = 1
+            elseif MMMainHidden == 1 then
+                MacroMakerFrame:Hide()
+                MMMainHidden = 0
+            end
+        end
+    end,
+})
+
+-- Register the minimap icon if LibDBIcon is available
+if MM_LDBicon and macroMakerLDB then
+    MM_LDBicon:Register("Macro Maker", macroMakerLDB, {})
+end
 
 
 MMQuestionIcon = nil
 MMCustomSpellName = nil
 MMCustomMacroString = nil
 MMEventFrame = CreateFrame("FRAME", nil, UIParent)
+MMEventFrame:Hide()
 
 
 if MMEventFrame ~= nil then
@@ -147,10 +154,10 @@ function MMEventHandler(self, event, ...)
 end
 
 function MMPrint(MMPrintString)
-	MMVerbose = MMVerboseCheckbox:GetChecked();
-	if MMVerbose then
-		print("|cFFA471C6Macro Maker: |r"..MMPrintString)
-	end
+    MMVerbose = MMVerboseCheckbox:GetChecked();
+    if MMVerbose then
+        DEFAULT_CHAT_FRAME:AddMessage("|cFFA471C6Macro Maker: |r"..MMPrintString)
+    end
 end
 
 function MMBtnHide_OnClick()
@@ -212,7 +219,7 @@ function MMTestMacro()
 				MMMacroNameIterator = GetMacroInfo(i)
 				if MMMacroNameIterator == MMSpellName then
 					MMPrint("You already have a macro for "..MMSpellName)
-					print(GetMacroInfo(MMSpellName))
+					MMPrint(tostring(GetMacroInfo(MMSpellName)))
 					MMMacroFound = 1
 				elseif MMMacroNameIterator == nil then
 					if i > 36 then	
@@ -378,8 +385,7 @@ function MMCustomMacro(MMCustomSpellName, MMCustomMacroString)
 				HideUIPanel(MacroFrame)
 				CreateMacro(MMSpellNameTrunc, "INV_MISC_QUESTIONMARK", MMMacroBodyString, 1)
 				MMPrint("Creating macro for ", MMSpellName)
-				--ShowUIPanel(MacroFrame) Replaced by ShowMacroFrame()
-        ShowMacroFrame()
+				-- ShowMacroFrame() -- No longer open the macro panel automatically
 				return
 			end
 		end
@@ -428,48 +434,83 @@ function MMBtnMacroInput_OnDrag()
 end
 
 function MMResetInputButton()
-	MMResetAllVariables()
-	MMBtnMacroInput:SetNormalTexture("Interface\\Icons\\INV_MISC_QUESTIONMARK")
-	MMBtnMacroInput:SetText("QuestionMark")
-	--MMPrint(MMBtnMacroInput:GetText())
-	--MMPrint("I am running the Reset Function.")
+    MMResetAllVariables()
+    MMBtnMacroInput:SetNormalTexture("Interface\\Icons\\INV_MISC_QUESTIONMARK")
+    MMBtnMacroInput:SetText("QuestionMark")
+    MMBtnMacroInput:SetAttribute("type", nil)
+    MMBtnMacroInput:SetAttribute("spell", nil)
+    MMBtnMacroInput:SetAttribute("macro", nil)
+    -- Tooltip for empty state
+    MMBtnMacroInput:SetScript("OnEnter", function(self)
+        if MMBtnMacroInput:GetText() == "QuestionMark" then
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText("Drop a spell or macro here!")
+            GameTooltip:Show()
+        end
+    end)
+    MMBtnMacroInput:SetScript("OnLeave", function(self)
+        GameTooltip:Hide()
+    end)
 end
 
 
 	--  Need to make separate Functions. First check Icon of MMBtnMacroInput, then use that to determine if you need to get spell from Cursor, or Use CurrentSpell.
 function MMBtnMacroInput_LeftButton()
-	--Make this button create macro for the input Action.
-	-- Still resets icon of InputButton. Shouldn't reset in this function.
-	-- Check for "CurrentSpell", then do everything, if no spell, print error, and do nothing.
-	
-	--MMPrint("Checking Icon...")
-	--MMPrint(MMBtnMacroInput:GetText())
-	if MMBtnMacroInput:GetText() == "QuestionMark" then
-		-- This should mean the Icon is '?', so you should check cursor, and if it has a spell, put it in CurrentSpell.
-		MMPrint("I have no spell yet. Please give me a spell to process.")
-		--MMPrint(GetCursorInfo())
-		MMInfoType, MMInfo1, MMInfo2, MMSpellID = GetCursorInfo()
-		ClearCursor()
-		if MMInfoType == "spell" then
-			--MMPrint("I have a spell now!")
-			if MMSpellID ~= nil then
-				MMSpellName, MMSpellRank, MMSpellIcon, MMSpellCost, MMInfo3, MMInfo4, MMInfo5, MMInfo6 = GetSpellInfo(MMSpellID)
-				--MMPrint(GetSpellInfo(MMSpellID))
-				MMPrint("You have selected the Spell: ", MMSpellName)
-			end
-			if MMSpellIcon ~= nil then
-				MMBtnMacroInput:SetNormalTexture(MMSpellIcon)
-				MMBtnMacroInput:SetText(MMSpellName)
-			end
-		end
-	end
-	if MMBtnMacroInput:GetText() ~= "QuestionMark" then
-		-- This should mean I have a CurrentSpell Already, and you should do nothing.
-		-- MMPrint("I have a spell already."..MMCurrentSpellName)
-		-- MMPrint("I have a spell already.")
-	MMPrint(MMBtnMacroInput:GetText())
-	end
-	
+    -- If the button is not empty, clear it first
+    if MMBtnMacroInput:GetText() ~= "QuestionMark" then
+        MMResetInputButton()
+    end
+
+    -- Now proceed as before
+    MMPrint("I have no spell or macro yet. Please give me a spell or macro to process.")
+    MMInfoType, MMInfo1, MMInfo2, MMSpellID = GetCursorInfo()
+    MMPrint(tostring(MMInfoType).." "..tostring(MMSpellID))
+    ClearCursor()
+    if not MMInfoType then
+        MMPrint("No spell or macro was found on the cursor.")
+        return
+    end
+    if MMInfoType == "spell" and MMSpellID ~= nil then
+        if GetSpellInfo then
+            local spellName, _, spellIcon = GetSpellInfo(MMSpellID)
+            MMSpellName = spellName
+            MMSpellIcon = spellIcon
+            MMPrint("Icon path:", MMSpellIcon)
+            if not MMSpellIcon or MMSpellIcon == "" then
+                MMSpellIcon = "Interface\\Icons\\INV_MISC_QUESTIONMARK"
+            end
+            MMBtnMacroInput:SetNormalTexture(MMSpellIcon)
+            MMBtnMacroInput:SetText(MMSpellName)
+            MMPrint("You have selected the Spell: ".. MMSpellName)
+            MMBtnMacroInput:SetAttribute("type", "spell")
+            MMBtnMacroInput:SetAttribute("spell", MMSpellName)
+            MMBtnMacroInput:SetAttribute("macro", nil)
+        else
+            local spell = Spell:CreateFromSpellID(MMSpellID)
+            spell:ContinueOnSpellLoad(function()
+                MMSpellName = spell:GetSpellName()
+                MMSpellIcon = spell:GetSpellTexture()
+                MMPrint("Icon path:", MMSpellIcon)
+                if not MMSpellIcon or MMSpellIcon == "" then
+                    MMSpellIcon = "Interface\\Icons\\INV_MISC_QUESTIONMARK"
+                end
+                MMBtnMacroInput:SetNormalTexture(MMSpellIcon)
+                MMBtnMacroInput:SetText(MMSpellName)
+                MMPrint("You have selected the Spell: ".. MMSpellName)
+                MMBtnMacroInput:SetAttribute("type", "spell")
+                MMBtnMacroInput:SetAttribute("spell", MMSpellName)
+                MMBtnMacroInput:SetAttribute("macro", nil)
+            end)
+        end
+    elseif MMInfoType == "macro" and MMInfo1 ~= nil then        
+        MMPrint("You can't use Macros, you need a spell.")
+        ClearCursor()
+		MMResetInputButton()
+    end
+    
+    if MMBtnMacroInput:GetText() ~= "QuestionMark" then
+        MMPrint(MMBtnMacroInput:GetText())
+    end
 end
 
 function MMBtnMacroInput_RightButton()
@@ -497,114 +538,11 @@ function MMSetMacroString()
 	
 end
 
--- Start of new LDB Broker Icon using LibDBIcon-1.0
-
-local macroMakerLDB = LibStub("LibDataBroker-1.1"):NewDataObject("Macro Maker", {
-type = "data source",
-text = "Macro Maker",
-icon = "Interface\\AddOns\\MacroMaker\\MacroMakerIcon.tga",
-OnClick = function(clickedframe, button)
-		if MMMainHidden == 0 then      
-      MacroMakerFrame:Raise()
-      MacroMakerFrame:Show()
-      MMMainHidden = 1
-    elseif MMMainHidden == 1 then
-      MacroMakerFrame:Hide()
-      MMMainHidden = 0
-    end
-end,
-})
-
-function MM_LDBaddon:OnInitialize() 
--- Need a ## SavedVariables: MacroMakerDB line in your TOC 
-self.db = LibStub("AceDB-3.0"):New("MacroMakerDB", { profile = { minimap = { hide = false, }, }, }) 
-MM_LDBicon:Register("Macro Maker", macroMakerLDB, self.db.profile.minimap) 
-self:RegisterChatCommand("macromaker", "MacroMakerChatCommand") 
-end
-
-function MM_LDBaddon:MacroMakerChatCommand() 
-  self.db.profile.minimap.hide = not self.db.profile.minimap.hide 
-  if self.db.profile.minimap.hide then 
-    MM_LDBicon:Hide("Macro Maker")
-    MMMinimapButtonShown = false
-  else 
-    MM_LDBicon:Show("Macro Maker") 
-    MMMinimapButtonShown = true
-  end 
-end
 
 
--- End of new LDB Broker Icon
-
---[[ Code for libdatabroker-1-1 (deprecated?)
-LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject("Macro Maker", {
-	type = "launcher",
-	icon = "Interface\\AddOns\\MacroMaker\\MacroMakerIcon.tga",
-	OnClick = function(clickedframe, button)
-		if MMMainHidden == 0 then
-      MacroMakerFrame:Raise()
-      MacroMakerFrame:Show()
-      MMMainHidden = 1
-    elseif MMMainHidden == 1 then
-      MacroMakerFrame:Hide()
-      MMMainHidden = 0
-    end
-	end,
-})
-]]--
 
 
---[[
--- Pasted Code for LDB and LDBIcon. (deprecated?)
 
-local db; -- File-global handle to the Database
--- LibDBIcon storage
-local defaults = {profile = {LDBIconStorage = {},},};
-
-local ldbObject = {
- type = "launcher",
- icon = "Interface\\AddOns\\MacroMaker\\MacroMakerIcon.tga",
---This is the icon used. Any .blp or .tga file is a valid icon.
---This path is ALWAYS relative to the World of Warcraft
---root (ie, "C:\Program Files\World of Warcraft" for
---Windows and "/Applications/World of Warcraft" for Mac)
- label = "MacroMaker",
- OnClick = function(self, button)
--- Add a click handler here
-
-	if MMMainHidden == 0 then
-    MacroMakerFrame:Raise()
-		MacroMakerFrame:Show()
-		MMMainHidden = 1
-	elseif MMMainHidden == 1 then
-		MacroMakerFrame:Hide()
-		MMMainHidden = 0
-	end
-
- end,
- OnTooltipShow = function(tooltip)
- tooltip:AddLine("Macro Maker \n Click to Show/Hide Macro Maker Screen.");
---Add text here. The first line is ALWAYS a "header" type.
---It will appear slightly larger than subsequent lines of text
- end,
-};
-
-function updateDB(self, event, database)
- db = database.profile;
- LibStub("LibDBIcon-1.0"):Refresh("AddonLDBObjectName", db.LDBIconStorage);
-end
-
-local vars = LibStub("AceDB-3.0"):New("AddonSavedVarStorage", defaults);
-vars:RegisterCallback("OnProfileChanged", updateDB);
-vars:RegisterCallback("OnProfileCopied", updateDB);
-vars:RegisterCallback("OnProfileReset", updateDB);
-db = vars.profile;
-
-LibStub("LibDataBroker-1.1"):NewDataObject("AddonLDBObjectName", ldbObject);
-LibStub("LibDBIcon-1.0"):Register("AddonLDBObjectName", ldbObject, db.LDBIconStorage);
-
--- End of Pasted Code.
-]]--
 
 --SetScripts MUST be AFTER the function they call.
 MMEventFrame:SetScript("OnEvent", MMEventHandler)

@@ -8,7 +8,7 @@
 			Highlight Layer only shows on mouse-over. (Obviously)
 		--> 
 		
-	<Frame name="MacroMakerFrame" parent="UIParent" inherits="UIPanelDialogTemplate" movable="true" enableMouse="true">
+	<Frame name="MacroMakerFrame" parent="UIParent" inherits="BasicFrameTemplate" movable="true" enableMouse="true">
 		<Size x="190" y="450" />
 		<Anchors>
 			<Anchor point="CENTER" relativeTo="UIParent" />
@@ -23,6 +23,7 @@
 			</EdgeSize>
 		</Backdrop>
     -->
+    
 		<Layers>
 			<Layer level="OVERLAY">
 				<!-- All FontString's should go here. -->

@@ -85,6 +85,11 @@
 						<Offset x="200" y="-110" />
 					</Anchor>
 				</Anchors>
+				<Scripts>
+					<OnClick>
+						MMMinimapButtonCheckbox_OnClick()
+					</OnClick>
+				</Scripts>
 			</CheckButton>      
 			<CheckButton name="MMVerboseCheckbox" inherits="UICheckButtonTemplate" text="">
 				<Size>
